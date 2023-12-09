@@ -1,0 +1,317 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UsersServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.h2.nreveco.services.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: UsersServiceImpl (com.h2.nreveco.services.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UsersServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,8%
+  </span>
+  <span class="absValue">
+    (9/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (48/72)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.h2.nreveco.services.impl;
+&nbsp;
+&nbsp;import com.h2.nreveco.dtos.MessageRs;
+&nbsp;import com.h2.nreveco.dtos.PhonesRq;
+&nbsp;import com.h2.nreveco.dtos.UserRq;
+&nbsp;import com.h2.nreveco.dtos.UserRs;
+&nbsp;import com.h2.nreveco.models.Phones;
+&nbsp;import com.h2.nreveco.models.Users;
+&nbsp;import com.h2.nreveco.repositories.PhonesRespository;
+&nbsp;import com.h2.nreveco.repositories.UsersRespository;
+&nbsp;import com.h2.nreveco.services.UsersService;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;
+&nbsp;import io.jsonwebtoken.Jwts;
+&nbsp;import io.jsonwebtoken.SignatureAlgorithm;
+&nbsp;import io.jsonwebtoken.io.Decoders;
+&nbsp;import io.jsonwebtoken.security.Keys;
+&nbsp;
+&nbsp;import java.time.ZonedDateTime;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.Date;
+&nbsp;import java.security.Key;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;import java.util.regex.Matcher;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class UsersServiceImpl implements UsersService {
+&nbsp;
+&nbsp;    private final UsersRespository usersRespository;
+&nbsp;
+&nbsp;    private final PhonesRespository phonesRespository;
+&nbsp;
+&nbsp;    public static final String SECRET = &quot;38045F34RHN3U4HR4938H9348HR9384HR9834HR9834HR8934HH3R98H4R&quot;;
+<b class="fc">&nbsp;    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy&quot;);</b>
+&nbsp;
+&nbsp;    private static String message;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * {@inheritDoc}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResponseEntity registerUsers(UserRq userRq) {
+&nbsp;
+&nbsp;        try{
+&nbsp;
+<b class="fc">&nbsp;            if(!this.validateParams(userRq)){</b>
+<b class="fc">&nbsp;                throw new Exception(this.message);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            ZonedDateTime zonedDateTime = ZonedDateTime.now();</b>
+<b class="fc">&nbsp;            final var date = zonedDateTime.format(formatter);</b>
+<b class="fc">&nbsp;            Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;            final Users users = new Users();</b>
+<b class="fc">&nbsp;            users.setName(userRq.getName());</b>
+<b class="fc">&nbsp;            users.setEmail(userRq.getEmail());</b>
+<b class="fc">&nbsp;            users.setPasdword(userRq.getPassword());</b>
+<b class="fc">&nbsp;            users.setCreated(date);</b>
+<b class="fc">&nbsp;            users.setLastLogin(date);</b>
+<b class="fc">&nbsp;            users.setToken(this.createToken(claims, userRq.getEmail()));</b>
+<b class="fc">&nbsp;            users.setIsActive(true);</b>
+<b class="fc">&nbsp;            Users userSaved = this.usersRespository.save(users);</b>
+<b class="fc">&nbsp;            this.savePhonesUser(userRq, userSaved.getId(), date);</b>
+&nbsp;
+<b class="nc">&nbsp;            return new ResponseEntity(this.getUserRs(userSaved), HttpStatus.CREATED);</b>
+<b class="fc">&nbsp;        } catch (Exception ex) {</b>
+&nbsp;
+<b class="fc">&nbsp;            MessageRs messageRs = new MessageRs();</b>
+<b class="fc">&nbsp;            messageRs.setMessage(ex.getMessage());</b>
+<b class="fc">&nbsp;            return new ResponseEntity(messageRs, HttpStatus.BAD_REQUEST);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * {@inheritDoc}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResponseEntity getuserByUuid(UUID id) {
+&nbsp;        try{
+<b class="fc">&nbsp;            return new ResponseEntity(this.usersRespository.findById(id), HttpStatus.OK);</b>
+<b class="nc">&nbsp;        } catch (Exception ex){</b>
+<b class="nc">&nbsp;            MessageRs messageRs = new MessageRs();</b>
+<b class="nc">&nbsp;            messageRs.setMessage(ex.getMessage());</b>
+<b class="nc">&nbsp;            return new ResponseEntity(messageRs, HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Register phones of a user
+&nbsp;     *
+&nbsp;     * @param userRq {@link UserRq}
+&nbsp;     * @param id {@link UUID}
+&nbsp;     * @param date {@link String}
+&nbsp;     */
+&nbsp;    private void savePhonesUser(UserRq userRq, UUID id, String date){
+<b class="nc">&nbsp;        for (PhonesRq phone : userRq.getPhones() ) {</b>
+<b class="nc">&nbsp;            final Phones phones = new Phones();</b>
+<b class="nc">&nbsp;            phones.setNumber(phone.getNumber());</b>
+<b class="nc">&nbsp;            phones.setCityCode(phone.getCitycode());</b>
+<b class="nc">&nbsp;            phones.setCountryCode(phone.getCountrycode());</b>
+<b class="nc">&nbsp;            phones.setUserId(id);</b>
+<b class="nc">&nbsp;            phones.setCreated(date);</b>
+<b class="nc">&nbsp;            this.phonesRespository.save(phones);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the response dto UserRs
+&nbsp;     *
+&nbsp;     * @param userSaved {@link Users}
+&nbsp;     * @return userRs {@link UserRs}
+&nbsp;     */
+&nbsp;    private UserRs getUserRs(Users userSaved){
+<b class="nc">&nbsp;        final UserRs userRs = new UserRs();</b>
+<b class="nc">&nbsp;        userRs.setId(userSaved.getId());</b>
+<b class="nc">&nbsp;        userRs.setCreated(userSaved.getCreated());</b>
+<b class="nc">&nbsp;        userRs.setModified(userSaved.getModified());</b>
+<b class="nc">&nbsp;        userRs.setLastLogin(userSaved.getLastLogin());</b>
+<b class="nc">&nbsp;        userRs.setToken(userSaved.getToken());</b>
+<b class="nc">&nbsp;        userRs.setIsActive(userSaved.getIsActive());</b>
+<b class="nc">&nbsp;        return userRs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create
+&nbsp;     *
+&nbsp;     * @param claims {@link Map}
+&nbsp;     * @param userEmail {@link String}
+&nbsp;     * @return string {@link String}
+&nbsp;     */
+&nbsp;    private String createToken(Map&lt;String, Object&gt; claims, String userEmail) {
+<b class="fc">&nbsp;        return Jwts.builder()</b>
+<b class="fc">&nbsp;                .setClaims(claims)</b>
+<b class="fc">&nbsp;                .setSubject(userEmail)</b>
+<b class="fc">&nbsp;                .setIssuedAt(new Date(System.currentTimeMillis()))</b>
+<b class="fc">&nbsp;                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))</b>
+<b class="fc">&nbsp;                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Return key
+&nbsp;     *
+&nbsp;     * @return key {@link Key}
+&nbsp;     */
+&nbsp;    private Key getSignKey() {
+<b class="fc">&nbsp;        byte[] keyBytes= Decoders.BASE64.decode(SECRET);</b>
+<b class="fc">&nbsp;        return Keys.hmacShaKeyFor(keyBytes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Allows to validate an email.
+&nbsp;     *
+&nbsp;     * @param email {@link String}
+&nbsp;     * @return boolean
+&nbsp;     */
+&nbsp;    private boolean validateEmail(String email){
+<b class="fc">&nbsp;        Pattern pattern = Pattern</b>
+<b class="fc">&nbsp;                .compile(&quot;^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@&quot;</b>
+&nbsp;                        + &quot;[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$&quot;);
+<b class="fc">&nbsp;        Matcher mather = pattern.matcher(email);</b>
+<b class="fc">&nbsp;        return mather.find();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Allows to validate an password.
+&nbsp;     *
+&nbsp;     * @param password {@link String}
+&nbsp;     * @return boolean
+&nbsp;     */
+&nbsp;    private boolean validatePassdword(String password){
+<b class="fc">&nbsp;        Pattern pattern = Pattern</b>
+<b class="fc">&nbsp;                .compile(&quot;^([A-Z])([a-z]+)([0-9]{2})$&quot;);</b>
+<b class="fc">&nbsp;        Matcher mather = pattern.matcher(password);</b>
+<b class="fc">&nbsp;        return mather.find();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validate the parameters for creating a user, based on business rules.
+&nbsp;     *
+&nbsp;     * @param userRq {@link UserRq}
+&nbsp;     * @return boolean
+&nbsp;     */
+&nbsp;    private boolean validateParams(UserRq userRq){
+<b class="fc">&nbsp;        boolean isValid = true;</b>
+<b class="fc">&nbsp;        Optional&lt;Users&gt; userFind =this.usersRespository.findByEmail(userRq.getEmail());</b>
+<b class="fc">&nbsp;        if(userFind.isPresent()){</b>
+<b class="nc">&nbsp;            this.message = &quot;El correo ya registrado&quot;;</b>
+<b class="nc">&nbsp;            isValid = false;</b>
+&nbsp;        }else {
+<b class="fc">&nbsp;            if(!this.validateEmail(userRq.getEmail())){</b>
+<b class="fc">&nbsp;                this.message = &quot;El correo no es valido&quot;;</b>
+<b class="fc">&nbsp;                isValid = false;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if(!this.validatePassdword(userRq.getPassword())){</b>
+<b class="fc">&nbsp;                this.message = &quot;La password no es valida&quot;;</b>
+<b class="fc">&nbsp;                isValid = false;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return isValid;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-12-08 13:56</div>
+</div>
+</body>
+</html>

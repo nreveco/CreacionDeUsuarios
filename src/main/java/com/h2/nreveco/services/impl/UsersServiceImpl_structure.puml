@@ -1,0 +1,142 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "com.h2.nreveco.services.impl.UsersServiceImpl",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_3274 { 
+   	label=h2
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1625690328 { 
+   	label=nreveco
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   UsersController1277508430[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)UsersController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   usersService: UsersService [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ getuserByUuid(uuid: UUID): ResponseEntity</TD></TR>
+<TR><TD ALIGN="LEFT" >+ registerUsers(userRq: UserRq): ResponseEntity</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+UsersServiceImpl818831079[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)UsersServiceImpl</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   phonesRespository: PhonesRespository [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   usersRespository: UsersRespository [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- createToken(claims: Map&lt;String, Object&gt;, userEmail: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" >- getUserRs(userSaved: Users): UserRs</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getuserByUuid(id: UUID): ResponseEntity</TD></TR>
+<TR><TD ALIGN="LEFT" >+ registerUsers(userRq: UserRq): ResponseEntity</TD></TR>
+<TR><TD ALIGN="LEFT" >- savePhonesUser(userRq: UserRq, id: UUID, date: String)</TD></TR>
+<TR><TD ALIGN="LEFT" >- validateEmail(email: String): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >- validateParams(userRq: UserRq): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >- validatePassdword(password: String): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+UsersController1277508430 -> UsersServiceImpl818831079[label="usersService
+[0..1]", arrowhead=none];
+    
+}
+@enduml

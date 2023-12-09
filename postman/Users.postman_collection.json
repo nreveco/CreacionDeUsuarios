@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "fecb6501-04fb-40d6-9569-5466a49026cb",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Nicolas\",\r\n    \"email\" : \"nreveco.rs@gmail.com\",\r\n    \"password\": \"Mipass\",\r\n    \"phones\": [\r\n      {\r\n        \"number\": \"16315551181\",\r\n        \"citycode\": \"1\",\r\n        \"countrycode\": \"52\"\r\n      }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/Api/v1/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"Api",
+						"v1",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/Api/v1/users/find/066609c6-199c-427e-90a9-f2881ad6fd02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"Api",
+						"v1",
+						"users",
+						"find",
+						"066609c6-199c-427e-90a9-f2881ad6fd02"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

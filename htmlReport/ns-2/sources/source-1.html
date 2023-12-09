@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UsersController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.h2.nreveco.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: UsersController (com.h2.nreveco.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UsersController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.h2.nreveco.controllers;
+&nbsp;
+&nbsp;import com.h2.nreveco.dtos.UserRq;
+&nbsp;import com.h2.nreveco.dtos.UserRs;
+&nbsp;import com.h2.nreveco.models.Users;
+&nbsp;import com.h2.nreveco.services.UsersService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(path = &quot;Api/v1/users&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+&nbsp;public class UsersController {
+&nbsp;
+&nbsp;    private final UsersService usersService;
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Register users&quot;, description = &quot;Register users in the system. Users object response contains id: UUID)\n&quot; +
+&nbsp;            &quot;created: user creation date\n&quot; +
+&nbsp;            &quot;modified: date of last user update\n&quot; +
+&nbsp;            &quot;last_login: of the last login (in the case of a new user, it will coincide with the creation date)\n&quot; +
+&nbsp;            &quot;token: JWT API access token\n&quot; +
+&nbsp;            &quot;isactive: Indicates if the user is still enabled within the system.&quot;, tags = { &quot;Register users by receiving parameters&quot; })
+&nbsp;    @ApiResponses({@ApiResponse(responseCode = &quot;201&quot;, content = { @Content(schema = @Schema(implementation = UserRs.class), mediaType = &quot;application/json&quot;) }), @ApiResponse(responseCode = &quot;404&quot;, content = { @Content(schema = @Schema()) }), @ApiResponse(responseCode = &quot;500&quot;, content = { @Content(schema = @Schema()) }) })
+&nbsp;    @ResponseStatus(value = HttpStatus.CREATED)
+&nbsp;    @PostMapping(&quot;/register&quot;)
+&nbsp;    public ResponseEntity registerUsers(@RequestBody final UserRq userRq) {
+<b class="fc">&nbsp;        return usersService.registerUsers(userRq);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get user&quot;, description = &quot;Obtains a user registered in the system. The service response is a users model&quot;, tags = { &quot;Get a user by UUID identifier&quot; })
+&nbsp;    @ApiResponses({@ApiResponse(responseCode = &quot;200&quot;, content = { @Content(schema = @Schema(implementation = Users.class), mediaType = &quot;application/json&quot;) }), @ApiResponse(responseCode = &quot;404&quot;, content = { @Content(schema = @Schema()) }), @ApiResponse(responseCode = &quot;500&quot;, content = { @Content(schema = @Schema()) }) })
+&nbsp;    @ResponseStatus(value = HttpStatus.CREATED)
+&nbsp;    @GetMapping(&quot;/find/{uuid}&quot;)
+&nbsp;    public ResponseEntity getuserByUuid(@PathVariable final UUID uuid){
+<b class="fc">&nbsp;        return usersService.getuserByUuid(uuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-12-08 13:56</div>
+</div>
+</body>
+</html>
