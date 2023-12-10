@@ -142,13 +142,14 @@ public class UsersServiceImpl implements UsersService {
      */
     private boolean validateParams(UserRq userRq){
         boolean isValid = true;
-        Optional<Users> userFind =this.usersRespository.findByEmail(userRq.getEmail());
-        if(userFind.isPresent()){
-            this.message = "El correo ya registrado";
+
+        if(!this.usersServiceUtils.validateEmail(userRq.getEmail())){
+            this.message = "El correo no es valido";
             isValid = false;
         }else {
-            if(!this.usersServiceUtils.validateEmail(userRq.getEmail())){
-                this.message = "El correo no es valido";
+            Optional<Users> userFind =this.usersRespository.findByEmail(userRq.getEmail());
+            if(userFind.isPresent()){
+                this.message = "El correo ya registrado";
                 isValid = false;
             }
 
